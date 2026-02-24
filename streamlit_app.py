@@ -7,16 +7,22 @@ st.set_page_config(layout="wide", page_title="Análisis de Contratos por RUC")
 @st.cache_data
 def cargar_datos():
     df = pd.read_parquet("Consolidado.parquet")
+    for col in df.select_dtypes(include=['object', 'string']).columns:
+        df[col] = df[col].astype(str).str.strip()
+
     df.reset_index(drop=True, inplace=True)
-    df['RUC'] = df['RUC'].astype(str).str.strip()
-    df['Razón Social'] = df['Razón Social'].astype(str).str.strip()
+    #df['RUC'] = df['RUC'].astype(str).str.strip()
+    #df['Razón Social'] = df['Razón Social'].astype(str).str.strip()
     df['RUC - Razón Social'] = df['RUC'] + " - " + df['Razón Social']
 
     df_mensual = pd.read_parquet("DataMensualContrato.parquet")
+    for col in df_mensual.select_dtypes(include=['object', 'string']).columns:
+        df_mensual[col] = df_mensual[col].astype(str).str.strip()
+
     df_mensual.reset_index(drop=True, inplace=True)
     df_mensual['Año'] = df_mensual['Fecha Periodo'].dt.year
-    df_mensual['RUC'] = df_mensual['RUC'].astype(str).str.strip()
-    df_mensual['Razón Social'] = df_mensual['Razón Social'].astype(str).str.strip()
+    #df_mensual['RUC'] = df_mensual['RUC'].astype(str).str.strip()
+    #df_mensual['Razón Social'] = df_mensual['Razón Social'].astype(str).str.strip()
     
     df_mensual['RUC - Razón Social'] = df_mensual['RUC'] + " - " + df_mensual['Razón Social']
     return df, df_mensual
@@ -198,6 +204,9 @@ if años_final:
                 df_total = pd.concat([df_resumen, df_agregado], axis=0)
                 df_total = df_total.groupby(['RUC', 'Fecha Periodo', 'Fuente'], as_index=False).sum()
                 df_total = df_total.merge(RucRazon, on='RUC', how='left')
+
+                df_total['RUC'] = df_total['RUC'].astype(str) # nuevo
+                df_total['Fuente'] = df_total['Fuente'].astype(str) # nuevo
 
                 fig = px.bar(
                     df_total,
