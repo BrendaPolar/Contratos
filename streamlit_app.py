@@ -6,13 +6,13 @@ st.set_page_config(layout="wide", page_title="Análisis de Contratos por RUC")
 
 @st.cache_data
 def cargar_datos():
-    df = pd.read_parquet("C:/Users/bpolar/Documents/GitHub/Contratos/Consolidado.parquet")
+    df = pd.read_parquet("Consolidado.parquet")
     df.reset_index(drop=True, inplace=True)
     df['RUC'] = df['RUC'].astype(str).str.strip()
     df['Razón Social'] = df['Razón Social'].astype(str).str.strip()
     df['RUC - Razón Social'] = df['RUC'] + " - " + df['Razón Social']
 
-    df_mensual = pd.read_parquet("C:/Users/bpolar/Documents/GitHub/Contratos/DataMensualContrato.parquet")
+    df_mensual = pd.read_parquet("DataMensualContrato.parquet")
     df_mensual.reset_index(drop=True, inplace=True)
     df_mensual['Año'] = df_mensual['Fecha Periodo'].dt.year
     df_mensual['RUC'] = df_mensual['RUC'].astype(str).str.strip()
