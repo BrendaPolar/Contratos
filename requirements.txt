@@ -4,3 +4,4 @@ matplotlib
 pyarrow
 plotly
 plotly.express
+numpy
